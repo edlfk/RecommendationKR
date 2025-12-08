@@ -1,0 +1,59 @@
+version: '3.8'
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rec_app
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    environment:
+      APP_ENV: development
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: recommendation_db
+      DB_USER: recuser
+      DB_PASSWORD: recpass
+    depends_on:
+      - db
+    networks:
+      - recnet
+
+  web:
+    image: nginx:stable
+    container_name: rec_web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - recnet
+
+  db:
+    image: postgres:15
+    container_name: rec_db
+    restart: always
+    environment:
+      POSTGRES_DB: recommendation_db
+      POSTGRES_USER: recuser
+      POSTGRES_PASSWORD: recpass
+
+      DB_DATABASE: recommendation_db
+      DB_USER: recuser
+      DB_PASSWORD: recpass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - recnet
+
+volumes:
+  pgdata:
+
+networks:
+  recnet:

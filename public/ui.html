@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест API системы рекомендаций</title>
+    <style>
+        /* Общие стили */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        h2 {
+            margin-top: 30px;
+            color: #444;
+            font-size: 1.2em;
+        }
+
+        /* Блоки */
+        .block {
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            background: #fafafa;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .block:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Формы */
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        /* Результаты */
+        pre {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.95em;
+        }
+
+        /* Подписи */
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Тестирование API системы рекомендаций</h1>
+
+    <div class="block">
+        <h2>Получить рекомендации пользователя (GET /recommendations)</h2>
+        <input type="text" id="recUserId" placeholder="Введите user_id (например, 1)">
+        <button onclick="getRecommendations()">Отправить</button>
+        <pre id="recResult"></pre>
+    </div>
+
+    <div class="block">
+        <h2>Сохранить/обновить профиль пользователя (POST /profile)</h2>
+        <textarea id="profileInput">{ 
+  "user_id": 1, 
+  "age": 25, 
+  "gender": "мужской", 
+  "interests": ["IT","игры","кино"] 
+}</textarea>
+        <button onclick="saveProfile()">Отправить</button>
+        <pre id="profileResult"></pre>
+    </div>
+
+    <div class="block">
+        <h2>Получить конкретный контент (GET /content/{id})</h2>
+        <input type="text" id="contentId" placeholder="Введите ID контента (например, 1)">
+        <button onclick="getContent()">Отправить</button>
+        <pre id="contentResult"></pre>
+    </div>
+</div>
+
+<script>
+    async function getRecommendations() {
+        const userId = document.getElementById("recUserId").value;
+        if (!userId) { alert("Пожалуйста, введите user_id"); return; }
+        const res = await fetch(`/recommendations?user_id=` + userId);
+        const data = await res.json();
+        document.getElementById("recResult").textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function saveProfile() {
+        const input = document.getElementById("profileInput").value;
+        if (!input) { alert("Пожалуйста, заполните данные профиля"); return; }
+        const res = await fetch(`/profile`, {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: input
+        });
+        const data = await res.json();
+        document.getElementById("profileResult").textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function getContent() {
+        const id = document.getElementById("contentId").value;
+        if (!id) { alert("Пожалуйста, введите ID контента"); return; }
+        const res = await fetch(`/content/` + id);
+        const data = await res.json();
+        document.getElementById("contentResult").textContent = JSON.stringify(data, null, 2);
+    }
+</script>
+
+</body>
+</html>

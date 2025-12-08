@@ -1,0 +1,17 @@
+{
+  "name": "university/recommendation-backend",
+  "description": "Backend for personalized content recommendations",
+  "require": {
+    "php": "^8.0",
+    "vlucas/phpdotenv": "^5.5",
+    "php-di/php-di": "^7.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  }
+}
