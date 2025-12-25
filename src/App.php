@@ -4,9 +4,6 @@ namespace App;
 use App\Config\Config;
 use App\Controller\RecommendationController;
 use App\Database\DB;
-use App\Repository\UserRepository;
-use App\Repository\ContentRepository;
-use App\Service\RecommendationService;
 use Psr\Container\ContainerInterface;
 use DI\ContainerBuilder;
 
@@ -26,18 +23,7 @@ class App
                 $cfg = $c->get(Config::class);
                 return new DB($cfg);
             },
-            UserRepository::class => function ($c) {
-                return new UserRepository($c->get(DB::class));
-            },
-            ContentRepository::class => function ($c) {
-                return new ContentRepository($c->get(DB::class));
-            },
-            RecommendationService::class => function ($c) {
-                return new RecommendationService(
-                    $c->get(UserRepository::class),
-                    $c->get(ContentRepository::class)
-                );
-            },
+
             RecommendationController::class => function ($c) {
                 return new RecommendationController($c->get(RecommendationService::class));
             }
